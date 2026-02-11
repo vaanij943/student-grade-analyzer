@@ -31,12 +31,31 @@ def letter_distribution(scores):
             dist["F"] += 1
     return dist
 
-def main():
-    csv_path = "data/grades.csv"
+def export_summary(stats, path):
+    with open(path, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["metric", "value"])
+        for key, value in stats.items():
+            writer.writerow([key, value])
 
-    scores = load_grades(csv_path)
+def export_distribution(dist, path):
+    with open(path, "w", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(["grade", "count"])
+        for grade, count in dist.items():
+            writer.writerow([grade, count])
+
+def main():
+    input_csv = "data/grades.csv"
+    summary_csv = "outputs/summary.csv"
+    dist_csv = "outputs/grade_distribution.csv"
+
+    scores = load_grades(input_csv)
     stats = compute_statistics(scores)
     dist = letter_distribution(scores)
+
+    export_summary(stats, summary_csv)
+    export_distribution(dist, dist_csv)
 
     print("Grade Analysis Results")
     print("----------------------")
@@ -46,6 +65,8 @@ def main():
     print("\nGrade Distribution:")
     for grade, count in dist.items():
         print(f"{grade}: {count}")
+
+    print("\nCSV files generated in outputs/")
 
 if __name__ == "__main__":
     main()
